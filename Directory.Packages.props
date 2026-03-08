@@ -9,6 +9,11 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.10" />
   </ItemGroup>
 
+  <!-- Domain Layer (MediatR.Contracts: INotification 인터페이스만 포함, 의존성 없음) -->
+  <ItemGroup>
+    <PackageVersion Include="MediatR.Contracts" Version="2.0.0" />
+  </ItemGroup>
+
   <!-- Application Layer -->
   <ItemGroup>
     <PackageVersion Include="MediatR" Version="12.4.1" />

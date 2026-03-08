@@ -1,5 +1,4 @@
-using MediatR;
-using RianFriends.Domain.Common;
+using RianFriends.Application.Abstractions;
 
 namespace RianFriends.Application.Conversation.Commands.SendMessage;
 
@@ -10,4 +9,4 @@ namespace RianFriends.Application.Conversation.Commands.SendMessage;
 public record SendMessageCommand(
     Guid SessionId,
     Guid UserId,
-    string Content) : IRequest<Result<IAsyncEnumerable<string>>>;
+    string Content) : ICommand<IAsyncEnumerable<string>>;

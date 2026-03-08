@@ -6,30 +6,33 @@ using RianFriends.Domain.Common;
 
 namespace RianFriends.Application.Avatar.Queries.GetAvatarState;
 
-/// <summary>아바타 상태 조회 핸들러. 아바타가 없으면 기본값(배고픔 0)으로 응답합니다.</summary>
+/// <summary>아바타 상태 조회 핸들러. 소유권 검증 후 아바타 상태를 반환합니다.</summary>
 public sealed class GetAvatarStateQueryHandler : IRequestHandler<GetAvatarStateQuery, Result<AvatarStateDto>>
 {
     private readonly IAvatarRepository _avatarRepository;
+    private readonly IFriendRepository _friendRepository;
 
     /// <inheritdoc />
-    public GetAvatarStateQueryHandler(IAvatarRepository avatarRepository)
+    public GetAvatarStateQueryHandler(IAvatarRepository avatarRepository, IFriendRepository friendRepository)
     {
         _avatarRepository = avatarRepository;
+        _friendRepository = friendRepository;
     }
 
     /// <inheritdoc />
     public async Task<Result<AvatarStateDto>> Handle(GetAvatarStateQuery request, CancellationToken cancellationToken)
     {
-        if (request.FriendId == Guid.Empty)
+        // 소유권 검증: 해당 Friend가 요청 사용자의 것인지 확인
+        var friend = await _friendRepository.GetByIdAsync(request.FriendId, cancellationToken);
+        if (friend is null || friend.UserId != request.UserId)
         {
-            return Result.Failure<AvatarStateDto>("친구 ID는 필수입니다.");
+            return Result.Failure<AvatarStateDto>("해당 친구를 찾을 수 없습니다.");
         }
 
         var avatar = await _avatarRepository.GetByFriendIdAsync(request.FriendId, cancellationToken);
 
         if (avatar is null)
         {
-            // 아직 먹이를 한 번도 안 준 친구는 기본 상태(배부름) 반환
             return Result.Success(new AvatarStateDto(
                 request.FriendId,
                 HungerLevel: 0,

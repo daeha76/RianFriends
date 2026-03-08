@@ -1,5 +1,7 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using AvatarEntity = RianFriends.Domain.Avatar.Avatar;
+using RianFriends.Application.Identity.Interfaces;
 using RianFriends.Domain.Avatar;
 using RianFriends.Domain.Billing;
 using RianFriends.Domain.Common;
@@ -18,6 +20,9 @@ namespace RianFriends.Infrastructure.Persistence;
 /// </summary>
 public class AppDbContext : DbContext
 {
+    private readonly IPublisher _publisher;
+    private readonly ICurrentUserService? _currentUserService;
+
     /// <summary>사용자 테이블</summary>
     public DbSet<User> Users => Set<User>();
 
@@ -58,16 +63,19 @@ public class AppDbContext : DbContext
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
 
     /// <summary>생성자</summary>
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public AppDbContext(
+        DbContextOptions<AppDbContext> options,
+        IPublisher publisher,
+        ICurrentUserService? currentUserService = null) : base(options)
     {
+        _publisher = publisher;
+        _currentUserService = currentUserService;
     }
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // Infrastructure 어셈블리의 모든 IEntityTypeConfiguration 자동 등록
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
     }
 
@@ -76,15 +84,29 @@ public class AppDbContext : DbContext
     {
         UpdateAuditColumns();
         var result = await base.SaveChangesAsync(cancellationToken);
+        await DispatchDomainEventsAsync(cancellationToken);
         return result;
     }
 
-    /// <summary>
-    /// SaveChanges 전 Audit 컬럼(UpdatedAt)을 자동으로 갱신합니다.
-    /// DB Trigger와 병행 사용하지만, 애플리케이션 레벨에서도 일관성을 보장합니다.
-    /// </summary>
+    private async Task DispatchDomainEventsAsync(CancellationToken ct)
+    {
+        var entities = ChangeTracker.Entries<BaseEntity>()
+            .Where(e => e.Entity.DomainEvents.Count > 0)
+            .Select(e => e.Entity)
+            .ToList();
+
+        var domainEvents = entities.SelectMany(e => e.DomainEvents).ToList();
+        entities.ForEach(e => e.ClearDomainEvents());
+
+        foreach (var domainEvent in domainEvents)
+        {
+            await _publisher.Publish(domainEvent, ct);
+        }
+    }
+
     private void UpdateAuditColumns()
     {
+        var currentUserId = GetCurrentUserId();
         var entries = ChangeTracker.Entries<AuditableEntity>();
 
         foreach (var entry in entries)
@@ -93,12 +115,26 @@ public class AppDbContext : DbContext
             {
                 entry.Entity.CreatedAt = DateTimeOffset.UtcNow;
                 entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                entry.Entity.CreatedBy = currentUserId;
+                entry.Entity.UpdatedBy = currentUserId;
             }
 
             if (entry.State == EntityState.Modified)
             {
                 entry.Entity.UpdatedAt = DateTimeOffset.UtcNow;
+                entry.Entity.UpdatedBy = currentUserId;
             }
         }
+    }
+
+    private Guid? GetCurrentUserId()
+    {
+        if (_currentUserService is null)
+        {
+            return null;
+        }
+
+        var userId = _currentUserService.UserId;
+        return userId == Guid.Empty ? null : userId;
     }
 }

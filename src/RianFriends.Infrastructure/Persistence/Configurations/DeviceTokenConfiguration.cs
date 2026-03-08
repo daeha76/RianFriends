@@ -13,9 +13,10 @@ internal sealed class DeviceTokenConfiguration : IEntityTypeConfiguration<Device
         builder.HasKey(d => d.Id);
 
         builder.Property(d => d.UserId).IsRequired();
-        builder.Property(d => d.Token).IsRequired().HasMaxLength(500);
+        builder.Property(d => d.Token).IsRequired().HasColumnType("text").HasMaxLength(500);
         builder.Property(d => d.Platform).IsRequired()
             .HasConversion<string>()
+            .HasColumnType("text")
             .HasMaxLength(10);
         builder.Property(d => d.IsActive).IsRequired().HasDefaultValue(true);
         builder.Property(d => d.CreatedAt).IsRequired();

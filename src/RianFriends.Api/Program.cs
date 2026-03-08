@@ -75,23 +75,33 @@ builder.Services.AddAuthorization();
 // ── Rate Limiting ─────────────────────────────────────────
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddSlidingWindowLimiter("AuthPolicy", opt =>
-    {
-        opt.PermitLimit = 10;
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.SegmentsPerWindow = 6;
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
+    // 인증 엔드포인트: IP 기반 파티셔닝 (미인증 요청)
+    options.AddPolicy("AuthPolicy", context =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
 
-    options.AddSlidingWindowLimiter("ConversationPolicy", opt =>
-    {
-        opt.PermitLimit = 20;
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.SegmentsPerWindow = 6;
-        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        opt.QueueLimit = 0;
-    });
+    // 대화 엔드포인트: 사용자별 파티셔닝
+    options.AddPolicy("ConversationPolicy", context =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            context.User.FindFirst("sub")?.Value
+                ?? context.Connection.RemoteIpAddress?.ToString()
+                ?? "unknown",
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
 
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });

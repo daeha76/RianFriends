@@ -61,8 +61,8 @@ public sealed class MemorySummaryJob : BackgroundService
             try
             {
                 // 해당 친구의 최근 메시지를 가져와서 요약
-                var recentMessages = await conversationRepository.GetRecentMessagesAsync(
-                    Guid.Empty, // TODO: SessionId 기반으로 개선 필요
+                var recentMessages = await conversationRepository.GetRecentMessagesByFriendIdAsync(
+                    expired.FriendId,
                     50, ct);
 
                 var summary = await llmService.SummarizeMemoryAsync(

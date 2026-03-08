@@ -1,5 +1,4 @@
-using MediatR;
-using RianFriends.Domain.Common;
+using RianFriends.Application.Abstractions;
 using RianFriends.Domain.Conversation;
 
 namespace RianFriends.Application.Conversation.Commands.SetEmpathyGauge;
@@ -9,4 +8,4 @@ public record SetEmpathyGaugeCommand(
     Guid SessionId,
     Guid UserId,
     int Gauge,
-    GaugeControlMode ControlMode) : IRequest<Result>;
+    GaugeControlMode ControlMode) : ICommand;

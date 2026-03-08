@@ -4,4 +4,8 @@
     <RootNamespace>RianFriends.Domain</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR.Contracts" />
+  </ItemGroup>
+
 </Project>

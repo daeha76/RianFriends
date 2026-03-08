@@ -49,7 +49,7 @@ internal sealed class ClaudeLlmService : ILlmService
         FriendMemory[] memories,
         CancellationToken ct = default)
     {
-        var requestBody = BuildRequestBody(_batchModel, systemPrompt, contextMessages, memories, stream: false);
+        var requestBody = BuildRequestBody(_conversationModel, systemPrompt, contextMessages, memories, stream: false);
         var response = await _httpClient.PostAsJsonAsync(MessagesEndpoint, requestBody, ct);
         response.EnsureSuccessStatusCode();
 

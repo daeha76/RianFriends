@@ -51,6 +51,7 @@ public class AuthController : ControllerBase
     /// <response code="401">갱신 실패</response>
     [HttpPost("refresh")]
     [AllowAnonymous]
+    [EnableRateLimiting("AuthPolicy")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(401)]

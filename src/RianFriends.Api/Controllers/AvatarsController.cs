@@ -23,12 +23,20 @@ public class AvatarsController : ControllerBase
     /// <param name="ct">취소 토큰</param>
     /// <response code="200">아바타 상태 반환</response>
     /// <response code="400">잘못된 요청</response>
+    /// <response code="401">인증 실패</response>
     [HttpGet("{friendId:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> GetAvatarState([FromRoute] Guid friendId, CancellationToken ct)
     {
-        var result = await _sender.Send(new GetAvatarStateQuery(friendId), ct);
+        var userId = GetUserId();
+        if (userId == Guid.Empty)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _sender.Send(new GetAvatarStateQuery(userId, friendId), ct);
         return result.IsSuccess ? Ok(result.Value) : Problem(detail: result.Error, statusCode: 400);
     }
 
@@ -38,16 +46,30 @@ public class AvatarsController : ControllerBase
     /// <param name="ct">취소 토큰</param>
     /// <response code="200">새 배고픔 레벨 반환</response>
     /// <response code="400">유효성 검증 실패</response>
+    /// <response code="401">인증 실패</response>
     [HttpPost("{friendId:guid}/feed")]
     [ProducesResponseType(typeof(int), 200)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> FeedAvatar(
         [FromRoute] Guid friendId,
         [FromBody] FeedAvatarRequest request,
         CancellationToken ct)
     {
-        var result = await _sender.Send(new FeedAvatarCommand(friendId, request.SnackType), ct);
+        var userId = GetUserId();
+        if (userId == Guid.Empty)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _sender.Send(new FeedAvatarCommand(userId, friendId, request.SnackType), ct);
         return result.IsSuccess ? Ok(result.Value) : Problem(detail: result.Error, statusCode: 400);
+    }
+
+    private Guid GetUserId()
+    {
+        var claim = User.FindFirst("sub") ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        return Guid.TryParse(claim?.Value, out var id) ? id : Guid.Empty;
     }
 }
 

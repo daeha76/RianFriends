@@ -75,6 +75,9 @@ public sealed class UserQuota : AuditableEntity
         return Result.Success();
     }
 
+    /// <summary>잔여 토큰이 있는지 확인합니다.</summary>
+    public bool HasRemainingTokens() => UsedTokens < QuotaLimit;
+
     /// <summary>일일 쿼터를 초기화합니다 (배치 잡에서 호출).</summary>
     public void Reset()
     {

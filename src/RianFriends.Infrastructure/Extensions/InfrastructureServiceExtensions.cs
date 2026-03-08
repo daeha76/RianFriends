@@ -70,6 +70,7 @@ public static class InfrastructureServiceExtensions
 
         // ── Phase 2: Redis Context ────────────────────────────
         services.AddScoped<IRedisContextService, RedisContextService>();
+        services.AddScoped<ICacheRemovalService, CacheRemovalService>();
 
         // ── Phase 2: LLM (Claude) ─────────────────────────────
         services.AddHttpClient<ILlmService, ClaudeLlmService>();

@@ -18,6 +18,7 @@ public sealed class SendMessageCommandHandler : IRequestHandler<SendMessageComma
     private readonly IFriendRepository _friendRepository;
     private readonly IMemoryRepository _memoryRepository;
     private readonly IRedisContextService _redisContextService;
+    private readonly IUserQuotaRepository _userQuotaRepository;
     private readonly ILlmService _llmService;
     private readonly ILogger<SendMessageCommandHandler> _logger;
 
@@ -27,6 +28,7 @@ public sealed class SendMessageCommandHandler : IRequestHandler<SendMessageComma
         IFriendRepository friendRepository,
         IMemoryRepository memoryRepository,
         IRedisContextService redisContextService,
+        IUserQuotaRepository userQuotaRepository,
         ILlmService llmService,
         ILogger<SendMessageCommandHandler> logger)
     {
@@ -34,6 +36,7 @@ public sealed class SendMessageCommandHandler : IRequestHandler<SendMessageComma
         _friendRepository = friendRepository;
         _memoryRepository = memoryRepository;
         _redisContextService = redisContextService;
+        _userQuotaRepository = userQuotaRepository;
         _llmService = llmService;
         _logger = logger;
     }
@@ -53,7 +56,14 @@ public sealed class SendMessageCommandHandler : IRequestHandler<SendMessageComma
             return Result.Failure<IAsyncEnumerable<string>>("종료된 세션입니다.");
         }
 
-        // 2. 친구 & 페르소나 로드
+        // 2. 토큰 할당량 확인 (LLM 호출 전 차단)
+        var quota = await _userQuotaRepository.GetTodayAsync(request.UserId, cancellationToken);
+        if (quota is not null && !quota.HasRemainingTokens())
+        {
+            return Result.Failure<IAsyncEnumerable<string>>("일일 토큰 한도를 초과했습니다. 플랜 업그레이드를 고려해주세요.");
+        }
+
+        // 3. 친구 & 페르소나 로드
         var friend = await _friendRepository.GetByIdAsync(session.FriendId, cancellationToken);
         if (friend is null)
         {

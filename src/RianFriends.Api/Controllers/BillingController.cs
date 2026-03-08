@@ -40,17 +40,19 @@ public class BillingController : ControllerBase
             rawJson = await reader.ReadToEndAsync(cancellationToken);
         }
 
-        // RevenueCat-Signature 헤더 검증
-        var signature = Request.Headers["RevenueCat-Signature"].FirstOrDefault();
+        // RevenueCat-Signature 헤더 검증 (fail-closed: secret 미설정 시 거부)
         var sharedSecret = _configuration["RevenueCat:WebhookSharedSecret"];
-
-        if (!string.IsNullOrEmpty(sharedSecret) && !string.IsNullOrEmpty(signature))
+        if (string.IsNullOrEmpty(sharedSecret))
         {
-            if (!ValidateSignature(rawJson, signature, sharedSecret))
-            {
-                _logger.LogWarning("RevenueCat Webhook 서명 검증 실패");
-                return Unauthorized("Invalid webhook signature");
-            }
+            _logger.LogError("RevenueCat:WebhookSharedSecret이 설정되지 않았습니다. Webhook 수신 거부.");
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Webhook secret not configured");
+        }
+
+        var signature = Request.Headers["RevenueCat-Signature"].FirstOrDefault();
+        if (string.IsNullOrEmpty(signature) || !ValidateSignature(rawJson, signature, sharedSecret))
+        {
+            _logger.LogWarning("RevenueCat Webhook 서명 검증 실패");
+            return Unauthorized("Invalid webhook signature");
         }
 
         var command = new HandleRevenueCatWebhookCommand(rawJson, signature);

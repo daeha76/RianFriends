@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using RianFriends.Application.Abstractions;
 using RianFriends.Application.Identity.Interfaces;
 using RianFriends.Domain.Common;
 
@@ -10,16 +11,19 @@ public class DeleteUserAccountCommandHandler : IRequestHandler<DeleteUserAccount
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuthService _authService;
+    private readonly ICacheRemovalService _cache;
     private readonly ILogger<DeleteUserAccountCommandHandler> _logger;
 
     /// <summary>의존성을 주입합니다.</summary>
     public DeleteUserAccountCommandHandler(
         IUserRepository userRepository,
         IAuthService authService,
+        ICacheRemovalService cache,
         ILogger<DeleteUserAccountCommandHandler> logger)
     {
         _userRepository = userRepository;
         _authService = authService;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -43,7 +47,24 @@ public class DeleteUserAccountCommandHandler : IRequestHandler<DeleteUserAccount
         // Supabase Auth 계정 삭제
         await _authService.DeleteUserAsync(request.UserId, cancellationToken);
 
+        // Redis 캐시 제거 (사용자 관련 키)
+        await ClearUserCacheAsync(request.UserId, cancellationToken);
+
         _logger.LogInformation("사용자 계정 탈퇴 완료. UserId: {UserId}", request.UserId);
         return Result.Success();
+    }
+
+    private async Task ClearUserCacheAsync(Guid userId, CancellationToken ct)
+    {
+        var keysToRemove = new[]
+        {
+            $"user:{userId}:session",
+            $"alarm:{userId}:schedule"
+        };
+
+        foreach (var key in keysToRemove)
+        {
+            await _cache.RemoveAsync(key, ct);
+        }
     }
 }

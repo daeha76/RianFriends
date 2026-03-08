@@ -13,7 +13,7 @@ internal sealed class SnackConfiguration : IEntityTypeConfiguration<Snack>
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.AvatarId).IsRequired();
-        builder.Property(s => s.SnackType).IsRequired().HasMaxLength(50);
+        builder.Property(s => s.SnackType).IsRequired().HasColumnType("text").HasMaxLength(50);
         builder.Property(s => s.FedAt).IsRequired();
         builder.Property(s => s.CreatedAt).IsRequired();
         builder.Property(s => s.UpdatedAt).IsRequired();

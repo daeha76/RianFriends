@@ -1,5 +1,4 @@
-using MediatR;
-using RianFriends.Domain.Common;
+using RianFriends.Application.Abstractions;
 using RianFriends.Domain.Learning;
 
 namespace RianFriends.Application.Learning.Commands.ParseCodeSwitch;
@@ -12,4 +11,4 @@ namespace RianFriends.Application.Learning.Commands.ParseCodeSwitch;
 public record ParseCodeSwitchCommand(
     Guid MessageId,
     string MessageText,
-    string UserNativeLanguage = "ko") : IRequest<Result<CodeSwitchSegment[]>>;
+    string UserNativeLanguage = "ko") : ICommand<CodeSwitchSegment[]>;

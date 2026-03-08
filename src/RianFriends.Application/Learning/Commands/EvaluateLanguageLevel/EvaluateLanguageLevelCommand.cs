@@ -1,5 +1,4 @@
-using MediatR;
-using RianFriends.Domain.Common;
+using RianFriends.Application.Abstractions;
 
 namespace RianFriends.Application.Learning.Commands.EvaluateLanguageLevel;
 
@@ -11,4 +10,4 @@ namespace RianFriends.Application.Learning.Commands.EvaluateLanguageLevel;
 public record EvaluateLanguageLevelCommand(
     Guid UserId,
     Guid FriendId,
-    string Language) : IRequest<Result>;
+    string Language) : ICommand;

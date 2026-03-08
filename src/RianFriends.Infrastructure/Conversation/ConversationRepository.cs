@@ -25,6 +25,17 @@ internal sealed class ConversationRepository : IConversationRepository
             .OrderBy(m => m.CreatedAt)
             .ToListAsync(ct);
 
+    public Task<List<Message>> GetRecentMessagesByFriendIdAsync(Guid friendId, int count = 50, CancellationToken ct = default)
+        => _context.Messages
+            .Where(m => _context.ConversationSessions
+                .Where(s => s.FriendId == friendId)
+                .Select(s => s.Id)
+                .Contains(m.SessionId))
+            .OrderByDescending(m => m.CreatedAt)
+            .Take(count)
+            .OrderBy(m => m.CreatedAt)
+            .ToListAsync(ct);
+
     public Task<Message?> GetMessageByIdAsync(Guid messageId, CancellationToken ct = default)
         => _context.Messages.FirstOrDefaultAsync(m => m.Id == messageId, ct);
 

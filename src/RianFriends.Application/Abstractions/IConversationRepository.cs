@@ -14,6 +14,9 @@ public interface IConversationRepository
     /// <summary>세션의 최근 메시지 목록을 조회합니다.</summary>
     Task<List<Message>> GetRecentMessagesAsync(Guid sessionId, int count = 20, CancellationToken ct = default);
 
+    /// <summary>친구 ID 기준으로 최근 메시지를 조회합니다. 메모리 요약 배치에서 사용합니다.</summary>
+    Task<List<Message>> GetRecentMessagesByFriendIdAsync(Guid friendId, int count = 50, CancellationToken ct = default);
+
     /// <summary>메시지 ID로 메시지를 조회합니다.</summary>
     Task<Message?> GetMessageByIdAsync(Guid messageId, CancellationToken ct = default);
 

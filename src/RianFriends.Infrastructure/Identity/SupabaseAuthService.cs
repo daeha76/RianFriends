@@ -11,16 +11,19 @@ internal sealed class SupabaseAuthService : IAuthService
 {
     private readonly Client _supabase;
     private readonly IConfiguration _configuration;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<SupabaseAuthService> _logger;
 
     /// <summary>의존성을 주입합니다.</summary>
     public SupabaseAuthService(
         Client supabase,
         IConfiguration configuration,
+        IHttpClientFactory httpClientFactory,
         ILogger<SupabaseAuthService> logger)
     {
         _supabase = supabase;
         _configuration = configuration;
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
 
@@ -58,7 +61,7 @@ internal sealed class SupabaseAuthService : IAuthService
     /// <inheritdoc />
     public async Task<AuthResultDto> RefreshAsync(string refreshToken, CancellationToken ct = default)
     {
-        var session = await _supabase.Auth.RefreshSession();
+        var session = await _supabase.Auth.SetSession(string.Empty, refreshToken);
         if (session?.AccessToken is null)
         {
             throw new InvalidOperationException("토큰 갱신 실패: 새 세션을 받을 수 없습니다.");
@@ -70,15 +73,13 @@ internal sealed class SupabaseAuthService : IAuthService
     /// <inheritdoc />
     public async Task DeleteUserAsync(Guid userId, CancellationToken ct = default)
     {
-        // Admin 작업은 서비스 키로 별도 HTTP 호출
-        // supabase-csharp 0.16.x에서는 Admin API가 별도 클라이언트를 통해 접근
         var serviceKey = _configuration["Supabase:ServiceKey"]
             ?? throw new InvalidOperationException("Supabase:ServiceKey가 설정되지 않았습니다.");
 
         var supabaseUrl = _configuration["Supabase:Url"]
             ?? throw new InvalidOperationException("Supabase:Url이 설정되지 않았습니다.");
 
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         httpClient.DefaultRequestHeaders.Add("apikey", serviceKey);
         httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {serviceKey}");
 
