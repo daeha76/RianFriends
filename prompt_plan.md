@@ -70,7 +70,7 @@ dotnet new sln --format slnx -n RianFriends
 - `User`, `UserProfile` 엔티티
 - Commands: RegisterUser, SocialLogin, RefreshToken, DeleteUserAccount
 - Queries: GetCurrentUser
-- 소셜 프로바이더: Google → Apple → Kakao → Naver
+- 소셜 프로바이더: Google → Apple → Kakao
 
 ### 기반 인프라
 - AppDbContext (UseNpgsql + UseSnakeCaseNamingConvention)

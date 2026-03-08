@@ -9,7 +9,6 @@
 | 프로바이더 | 코드 상수 | 비고 |
 |:----------|:---------|:-----|
 | Google | `"google"` | 글로벌 기본 |
-| Naver | `"naver"` | 한국 사용자 주력 |
 | Kakao | `"kakao"` | 한국 사용자 주력 |
 | Apple | `"apple"` | iOS 필수 (App Store 정책) |
 
