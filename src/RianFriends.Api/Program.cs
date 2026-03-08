@@ -1,6 +1,8 @@
+using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
 using RianFriends.Application.Extensions;
 using RianFriends.Application.Identity.Interfaces;
 using RianFriends.Api.Services;
@@ -46,27 +48,27 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-// ── JWT Bearer 인증 ───────────────────────────────────────
-var supabaseProjectRef = builder.Configuration["Supabase:ProjectRef"]
-    ?? throw new InvalidOperationException("Supabase:ProjectRef 설정이 필요합니다.");
+// ── JWT Bearer 인증 (자체 발급 JWT 검증) ────────────────────
+var jwtSecret = builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("Jwt:Secret 설정이 필요합니다. (최소 32자)");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+    ?? throw new InvalidOperationException("Jwt:Issuer 설정이 필요합니다.");
+var jwtAudience = builder.Configuration["Jwt:Audience"]
+    ?? throw new InvalidOperationException("Jwt:Audience 설정이 필요합니다.");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://{supabaseProjectRef}.supabase.co/auth/v1";
-        options.Audience = "authenticated";
-        options.Events = new JwtBearerEvents
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            OnMessageReceived = ctx =>
-            {
-                var authHeader = ctx.Request.Headers.Authorization.ToString();
-                if (authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-                {
-                    ctx.Token = authHeader["Bearer ".Length..].Trim();
-                }
-
-                return Task.CompletedTask;
-            }
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(1)
         };
     });
 

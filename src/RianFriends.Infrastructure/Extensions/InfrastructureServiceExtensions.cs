@@ -57,7 +57,9 @@ public static class InfrastructureServiceExtensions
         // ── Identity ─────────────────────────────────────────
         RegisterSupabaseClient(services, configuration);
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IAuthService, SupabaseAuthService>();
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
         // ── Phase 2: Friend ───────────────────────────────────
         services.AddScoped<IFriendRepository, FriendRepository>();
