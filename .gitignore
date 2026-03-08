@@ -1,0 +1,45 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+*.DotSettings.user
+
+## Secrets (절대 커밋 금지)
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json
+secrets.json
+*.pfx
+*.p12
+
+## MAUI Build Outputs
+*.ipa
+*.apk
+*.aab
+*.app
+_framework/
+
+## Test Results
+TestResults/
+coverage/
+*.cobertura.xml
+*.opencover.xml
+
+## EF Core Migrations SQL (생성물)
+migrations.sql
+
+## Build
+publish/
+artifacts/
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Logs
+*.log
+logs/

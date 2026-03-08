@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/shared/">
+    <Project Path="shared/RianFriends.Contracts/RianFriends.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/RianFriends.Api/RianFriends.Api.csproj" />
+    <Project Path="src/RianFriends.App/RianFriends.App.csproj" />
+    <Project Path="src/RianFriends.Application/RianFriends.Application.csproj" />
+    <Project Path="src/RianFriends.Domain/RianFriends.Domain.csproj" />
+    <Project Path="src/RianFriends.Infrastructure/RianFriends.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RianFriends.Api.Tests/RianFriends.Api.Tests.csproj" />
+    <Project Path="tests/RianFriends.Application.Tests/RianFriends.Application.Tests.csproj" />
+    <Project Path="tests/RianFriends.Architecture.Tests/RianFriends.Architecture.Tests.csproj" />
+    <Project Path="tests/RianFriends.Domain.Tests/RianFriends.Domain.Tests.csproj" />
+    <Project Path="tests/RianFriends.Infrastructure.Tests/RianFriends.Infrastructure.Tests.csproj" />
+  </Folder>
+</Solution>

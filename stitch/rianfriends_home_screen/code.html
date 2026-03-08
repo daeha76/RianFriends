@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#e68c4c",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#211811",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<title>RianFriends - Home</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Top Header -->
+<header class="flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-10 p-4 justify-between border-b border-primary/10">
+<div class="flex size-10 shrink-0 items-center overflow-hidden rounded-full bg-primary/20">
+<img class="w-full h-full object-cover" data-alt="User profile circular avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA56VetC8UcdjT2sWqfQAprdzk1zj6i79ghxZuG5QEe2G-hdOUJYVTGStXoHsvxRlizIwdOhxnMd2ct5EK6BgxCUSBIGGWQpKOQWamkdg07gO66cnbduBuXa8paCP2dHDNm3PK8OYUeNiQaD-wjoXKR5S6rmACuScHQlilOR6InLs-CMy3AQlPzTC9AlUIF3YEKARZf9ZXxQbIiMABSxQgMnwQuhTh20j1z0KtBC-XEfeAyi7_dUK0PjYIXjO90lTcMrMGXMPSaqwnU"/>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">RianFriends</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col p-4 gap-6">
+<!-- Avatar Stage Section -->
+<div class="relative group aspect-[4/5] w-full max-w-md mx-auto overflow-hidden rounded-xl bg-gradient-to-b from-primary/5 to-primary/20 border border-primary/10 shadow-inner">
+<!-- Background Image (Cozy Room) -->
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-overlay">
+<img class="w-full h-full object-cover" data-alt="Cozy sunlit modern room with plants" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAokeu9OWvJ0pOVGVmkGeeDUec660ABpNZ8CrBlqFAFjQ2HRckSr6tP70IdOLIDEExIF5NykAJ-m496CyEpky3WdN9fSYUm9woX5IyUuxS5eJjnsraE-OrAysEpPXDtVGMXRm84Al5Hj4H7CckVqCBMuEl-7ayje5YrsrdnJFbVKTfqgb_hH9OcYcBWT3ZrsjmQ-lORHs5lvGeHFaC2mQL84sLy80oIpvNLBrjhe7B4CuIp1_A6EqrxSnDS8U3ZxnX6P6el0GMPUz4p"/>
+</div>
+<!-- 3D-style Character Center -->
+<div class="absolute inset-0 z-10 flex items-center justify-center p-8">
+<div class="relative w-full h-full flex items-center justify-center">
+<img class="w-full max-h-full object-contain drop-shadow-2xl" data-alt="Cute 3D stylized character smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeBUEeme-YQoyKBqnc7QAn-Omi0dmV0A1tJbTKeb4SFTVTQqTGZAP5H16m8i8ylRiikWJalxu4U8hIBp4SM4GFbvgWD0HH_KpeeR9h59BPhkeXqdOSfn8W32jQuk6EHZBD4Hvk3p31mcqVTYQxWSp3OGYEloZdWicgT7PbteO8fYhgqpCo7iRP1f5eBR_chzocdp39VldOw5uGu2Ko_sbGxohPhERL6WfWfQHVdvB0LN43rodb0V2XamzQIlzRqmrgem8YaER-c1dM"/>
+<!-- Mood Badge -->
+<div class="absolute top-4 right-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-primary/20">
+<span class="material-symbols-outlined text-yellow-500">sentiment_very_satisfied</span>
+<span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">Mood: Happy</span>
+</div>
+</div>
+</div>
+<!-- Interaction Overlay Buttons -->
+<div class="absolute bottom-6 left-0 right-0 z-20 flex justify-center gap-4 px-6">
+<button class="flex-1 bg-primary text-white font-bold py-4 rounded-full shadow-lg shadow-primary/30 flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">fastfood</span>
+                    Give Snack
+                </button>
+<button class="flex-1 bg-white/90 dark:bg-slate-800/90 text-slate-900 dark:text-white font-bold py-4 rounded-full shadow-lg flex items-center justify-center gap-2 border border-primary/20 transition-transform active:scale-95">
+<span class="material-symbols-outlined">forum</span>
+                    Chat
+                </button>
+</div>
+</div>
+<!-- Vital Stats Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm border border-primary/10 flex flex-col gap-5">
+<!-- Hunger Level -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+<span class="text-sm font-bold font-display uppercase tracking-tight">Hunger Level</span>
+</div>
+<span class="text-xl font-bold text-primary">40%</span>
+</div>
+<div class="w-full h-3 bg-primary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-500" style="width: 40%;"></div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 italic">Rian is feeling a little peckish!</p>
+</div>
+<!-- Empathy Level -->
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+<span class="material-symbols-outlined text-pink-500">favorite</span>
+<span class="text-sm font-bold font-display uppercase tracking-tight">Empathy Level</span>
+</div>
+<span class="text-xl font-bold text-pink-500">85%</span>
+</div>
+<div class="w-full h-3 bg-pink-100 dark:bg-pink-900/30 rounded-full overflow-hidden">
+<div class="h-full bg-pink-500 rounded-full transition-all duration-500" style="width: 85%;"></div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 italic">You're building a strong bond!</p>
+</div>
+</div>
+<!-- Secondary Action -->
+<div class="w-full">
+<button class="w-full bg-primary/10 dark:bg-primary/20 text-primary font-bold py-4 rounded-xl border-2 border-dashed border-primary/30 flex items-center justify-center gap-3 hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">school</span>
+<span class="font-display">Start Learning Session</span>
+</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-primary/10 pb-6 pt-2 px-4">
+<div class="flex justify-between items-center max-w-md mx-auto">
+<!-- Home -->
+<a class="flex flex-col items-center gap-1 text-primary group" href="#">
+<div class="p-2 rounded-full bg-primary/10">
+<span class="material-symbols-outlined">home</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest font-display">Home</span>
+</a>
+<!-- Chat -->
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 transition-colors hover:text-primary" href="#">
+<div class="p-2 rounded-full">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest font-display">Chat</span>
+</a>
+<!-- Learning -->
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 transition-colors hover:text-primary" href="#">
+<div class="p-2 rounded-full">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest font-display">Learning</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 transition-colors hover:text-primary" href="#">
+<div class="p-2 rounded-full">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest font-display">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>
