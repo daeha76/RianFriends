@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using AvatarEntity = RianFriends.Domain.Avatar.Avatar;
 using RianFriends.Domain.Avatar;
+using RianFriends.Domain.Billing;
 using RianFriends.Domain.Common;
 using RianFriends.Domain.Conversation;
 using RianFriends.Domain.Friend;
@@ -49,6 +50,12 @@ public class AppDbContext : DbContext
 
     /// <summary>디바이스 토큰 테이블</summary>
     public DbSet<DeviceToken> DeviceTokens => Set<DeviceToken>();
+
+    /// <summary>일일 토큰 쿼터 테이블</summary>
+    public DbSet<UserQuota> UserQuotas => Set<UserQuota>();
+
+    /// <summary>구독 이력 테이블</summary>
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
 
     /// <summary>생성자</summary>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

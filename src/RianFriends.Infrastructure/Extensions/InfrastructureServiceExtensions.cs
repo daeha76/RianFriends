@@ -5,6 +5,7 @@ using RianFriends.Application.Abstractions;
 using RianFriends.Application.Identity.Interfaces;
 using RianFriends.Infrastructure.Avatar;
 using RianFriends.Infrastructure.BackgroundJobs;
+using RianFriends.Infrastructure.Billing;
 using RianFriends.Infrastructure.Conversation;
 using RianFriends.Infrastructure.Friend;
 using RianFriends.Infrastructure.Identity;
@@ -84,6 +85,12 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IDeviceTokenRepository, DeviceTokenRepository>();
         services.AddScoped<INotificationService, FcmNotificationService>();
         services.AddHostedService<HungerIncreaseJob>();
+
+        // ── Phase 4: Billing ───────────────────────────────────
+        services.AddScoped<IUserQuotaRepository, UserQuotaRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IBillingService, RevenueCatWebhookService>();
+        services.AddHostedService<DailyQuotaResetJob>();
 
         return services;
     }
