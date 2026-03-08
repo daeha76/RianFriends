@@ -62,6 +62,9 @@ public class AppDbContext : DbContext
     /// <summary>구독 이력 테이블</summary>
     public DbSet<Subscription> Subscriptions => Set<Subscription>();
 
+    /// <summary>RefreshToken 테이블</summary>
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     /// <summary>생성자</summary>
     public AppDbContext(
         DbContextOptions<AppDbContext> options,

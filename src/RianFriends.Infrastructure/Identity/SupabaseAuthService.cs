@@ -6,7 +6,10 @@ using Supabase;
 
 namespace RianFriends.Infrastructure.Identity;
 
-/// <summary>Supabase Auth 연동 서비스 구현체 (supabase-csharp 0.16.x)</summary>
+/// <summary>
+/// Supabase Auth 연동 서비스 구현체 (supabase-csharp 0.16.x).
+/// 소셜 토큰 검증 + 사용자 정보 반환만 담당. JWT 발급은 JwtTokenService가 처리합니다.
+/// </summary>
 internal sealed class SupabaseAuthService : IAuthService
 {
     private readonly Client _supabase;
@@ -28,46 +31,32 @@ internal sealed class SupabaseAuthService : IAuthService
     }
 
     /// <inheritdoc />
-    public async Task<AuthResultDto> SignInAsync(string email, string password, CancellationToken ct = default)
+    public async Task<SocialUserInfo> SignInAsync(string email, string password, CancellationToken ct = default)
     {
         var session = await _supabase.Auth.SignIn(email, password);
-        if (session?.AccessToken is null)
+        if (session?.User is null)
         {
-            throw new InvalidOperationException("Supabase 로그인 실패: 세션을 받을 수 없습니다.");
+            throw new InvalidOperationException("Supabase 로그인 실패: 사용자 정보를 받을 수 없습니다.");
         }
 
-        _logger.LogInformation("Supabase 이메일 로그인 성공. Email: {Email}", email);
-        return MapToDto(session);
+        _logger.LogInformation("Supabase 이메일 인증 성공. Email: {Email}", email);
+        return MapToUserInfo(session);
     }
 
     /// <inheritdoc />
-    public async Task<AuthResultDto> SignInWithOAuthAsync(string provider, string accessToken, CancellationToken ct = default)
+    public async Task<SocialUserInfo> SignInWithOAuthAsync(string provider, string accessToken, CancellationToken ct = default)
     {
-        // supabase-csharp 0.16.x: SignInWithIdToken으로 소셜 토큰 교환
-        // MAUI 앱에서 소셜 SDK로 획득한 id_token을 Supabase에 전달
         var session = await _supabase.Auth.SignInWithIdToken(
             MapProvider(provider),
             accessToken);
 
-        if (session?.AccessToken is null)
+        if (session?.User is null)
         {
-            throw new InvalidOperationException($"Supabase OAuth 로그인 실패. Provider: {provider}");
+            throw new InvalidOperationException($"Supabase OAuth 인증 실패. Provider: {provider}");
         }
 
-        _logger.LogInformation("Supabase OAuth 로그인 성공. Provider: {Provider}", provider);
-        return MapToDto(session);
-    }
-
-    /// <inheritdoc />
-    public async Task<AuthResultDto> RefreshAsync(string refreshToken, CancellationToken ct = default)
-    {
-        var session = await _supabase.Auth.SetSession(string.Empty, refreshToken);
-        if (session?.AccessToken is null)
-        {
-            throw new InvalidOperationException("토큰 갱신 실패: 새 세션을 받을 수 없습니다.");
-        }
-
-        return MapToDto(session);
+        _logger.LogInformation("Supabase OAuth 인증 성공. Provider: {Provider}", provider);
+        return MapToUserInfo(session);
     }
 
     /// <inheritdoc />
@@ -99,11 +88,8 @@ internal sealed class SupabaseAuthService : IAuthService
             _ => throw new ArgumentException($"지원하지 않는 프로바이더: {provider}", nameof(provider))
         };
 
-    private static AuthResultDto MapToDto(Supabase.Gotrue.Session session)
+    private static SocialUserInfo MapToUserInfo(Supabase.Gotrue.Session session)
         => new(
             session.User?.Id is { } id ? Guid.Parse(id) : Guid.Empty,
-            session.User?.Email ?? string.Empty,
-            session.AccessToken!,
-            session.RefreshToken ?? string.Empty,
-            session.ExpiresAt());
+            session.User?.Email ?? string.Empty);
 }

@@ -5,7 +5,6 @@ namespace RianFriends.Application.Identity.Commands.Login;
 /// <summary>LoginCommand 유효성 검증</summary>
 public class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
-    // Naver는 Supabase Gotrue에서 미지원 — Custom OIDC 구현 후 추가 예정
     private static readonly string[] AllowedProviders = ["google", "kakao", "apple", "email"];
 
     /// <summary>유효성 규칙을 설정합니다.</summary>
