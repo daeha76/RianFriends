@@ -48,6 +48,13 @@ public sealed class FeedAvatarCommandHandler : IRequestHandler<FeedAvatarCommand
             return Result.Failure<int>(feedResult.Error);
         }
 
+        // 간식 이력 기록
+        var snackResult = Snack.Create(avatar.Id, request.SnackType);
+        if (snackResult.IsSuccess)
+        {
+            _avatarRepository.AddSnack(snackResult.Value);
+        }
+
         await _avatarRepository.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation(

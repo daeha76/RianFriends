@@ -30,6 +30,12 @@ internal sealed class AvatarRepository : IAvatarRepository
     }
 
     /// <inheritdoc />
+    public void AddSnack(Snack snack)
+    {
+        _context.Snacks.Add(snack);
+    }
+
+    /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken ct)
     {
         return _context.SaveChangesAsync(ct);

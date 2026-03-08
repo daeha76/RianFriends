@@ -1,4 +1,5 @@
 using AvatarEntity = RianFriends.Domain.Avatar.Avatar;
+using RianFriends.Domain.Avatar;
 
 namespace RianFriends.Application.Abstractions;
 
@@ -10,6 +11,9 @@ public interface IAvatarRepository
 
     /// <summary>아바타를 추가합니다.</summary>
     void Add(AvatarEntity avatar);
+
+    /// <summary>간식 기록을 추가합니다.</summary>
+    void AddSnack(Snack snack);
 
     /// <summary>변경사항을 저장합니다.</summary>
     Task<int> SaveChangesAsync(CancellationToken ct);
